@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Marketplace — Projects by Harsha Seshadri</title>
+  <meta name="description" content="A polished marketplace to showcase and sell projects by Harsha Seshadri." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#060718;--card:#061426;--muted:#9aa6bd;--accent:#2563eb;--accent-2:#7c3aed;}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, Arial;color:#e7eefc;background:radial-gradient(800px 400px at 10% 10%, rgba(37,99,235,0.08), transparent 8%),radial-gradient(700px 350px at 90% 90%, rgba(124,58,237,0.06), transparent 12%),linear-gradient(180deg,#061022 0%, #040814 100%);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1200px;margin:28px auto;padding:28px;position:relative}
+
+    /* spider-web top-left - decorative and anchor for stickers */
+    .web-anchor{position:absolute;left:48px;top:18px;width:120px;height:120px;pointer-events:none}
+    .web-svg{width:100%;height:100%;opacity:0.55;filter:drop-shadow(0 6px 20px rgba(0,0,0,0.6))}
+
+    /* sticker styles */
+    .sticker{position:absolute;left:0;top:0;will-change:transform,opacity;display:flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:12px;background:linear-gradient(135deg,#fff 10%, rgba(255,255,255,0.9) 40%);color:#081122;font-weight:800;box-shadow:0 10px 30px rgba(2,6,23,0.6);cursor:pointer;border:1px solid rgba(0,0,0,0.06);transform-origin:top center}
+    .sticker.emoji{font-size:18px;padding:10px 12px;border-radius:12px}
+    .sticker.small{padding:6px 8px;font-size:13px;border-radius:10px}
+
+    /* drop animation: fall then swing as if attached to web */
+    @keyframes dropSwing{
+      0%{transform:translateY(-40vh) rotate(-15deg) translateX(0);opacity:0}
+      25%{opacity:1}
+      60%{transform:translateY(18vh) rotate(8deg) translateX(0)}
+      80%{transform:translateY(22vh) rotate(-6deg) translateX(0)}
+      100%{transform:translateY(20vh) rotate(0deg) translateX(0)}
+    }
+    /* gentle pendulum oscillation applied after drop finishes */
+    @keyframes pendulum{
+      0%{transform:rotate(-6deg)}
+      50%{transform:rotate(6deg)}
+      100%{transform:rotate(-6deg)}
+    }
+
+    /* hero and layout (unchanged core) */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin-bottom:18px}
+    .hero-left{padding:28px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.028);box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    .logo{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-family:Poppins;margin-bottom:12px}
+    h1{margin:0;font-size:2rem;line-height:1.05}
+    .h-sub{color:var(--muted);margin-top:10px;font-size:1rem}
+    .cta-row{display:flex;gap:12px;margin-top:18px}
+    .btn{padding:12px 18px;border-radius:12px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700;box-shadow:0 10px 30px rgba(37,99,235,0.12);transition:transform .18s ease,box-shadow .18s ease}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+    .visual{position:relative;height:420px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg, rgba(37,99,235,0.06), rgba(124,58,237,0.045));border:1px solid rgba(255,255,255,0.02)}
+    .blob{position:absolute;left:-10%;top:-30%;width:420px;height:420px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));filter:blur(60px);opacity:0.18;transform:rotate(15deg);animation:blobMove 12s ease-in-out infinite}
+    @keyframes blobMove{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(18px) rotate(10deg)}100%{transform:translateY(0) rotate(0)}}
+
+    .float-grid{position:absolute;inset:24px;padding:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .preview{height:160px;border-radius:12px;overflow:hidden;background:#071325;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;justify-content:flex-end;padding:12px;backdrop-filter:blur(6px);cursor:pointer;transition:transform .35s cubic-bezier(.2,.9,.2,1),box-shadow .35s}
+    .preview:hover{transform:translateY(-8px);box-shadow:0 30px 70px rgba(2,6,23,0.6)}
+
+    .controls{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0;align-items:center}
+    .search{flex:1;min-width:240px}
+    input[type=text],select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:inherit;outline:none;font-weight:500}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.01));border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;min-height:260px;transform:translateY(0);transition:transform .35s cubic-bezier(.2,.9,.2,1),box-shadow .35s}
+    .card:hover{transform:translateY(-12px) rotate(-0.4deg);box-shadow:0 36px 80px rgba(2,6,23,0.6)}
+
+    .thumb{height:150px;border-radius:10px;overflow:hidden;background:#061426;display:flex;align-items:center;justify-content:center;position:relative;perspective:1000px}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.9,.2,1)}
+    .card:hover .thumb img{transform:scale(1.06)}
+
+    .tilt{transform-style:preserve-3d;transition:transform .15s ease}
+    .ribbon{position:absolute;top:10px;left:10px;background:linear-gradient(90deg,#11182755,var(--accent));padding:6px 10px;border-radius:999px;font-size:0.8rem;color:white;font-weight:600;backdrop-filter:blur(4px)}
+
+    .meta{margin-top:12px;flex:1}
+    .title{font-weight:800;margin:0 0 6px}
+    .desc{color:var(--muted);font-size:0.95rem;margin:0}
+    .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{font-size:0.78rem;padding:6px 10px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02);font-weight:700;color:var(--muted)}
+
+    .card-footer{display:flex;gap:10px;align-items:center;margin-top:14px}
+    .link{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--accent);text-decoration:none;font-weight:700}
+    .price{font-weight:800;color:white;margin-left:auto;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:8px 12px;border-radius:8px}
+
+    .skeleton{border-radius:12px;background:linear-gradient(90deg,#0b1420 25%, #0f1b2b 50%, #0b1420 75%);background-size:200% 100%;animation:shimmerLoad 1.2s linear infinite}
+    @keyframes shimmerLoad{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    .upcoming{position:relative;overflow:hidden}
+    .upcoming::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg, rgba(124,58,237,0.06), rgba(37,99,235,0.04));opacity:0;animation:comingPulse 2.2s infinite}
+    @keyframes comingPulse{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+
+    .loadMoreWrap{display:flex;justify-content:center;margin:18px 0}
+    .loadMore{padding:12px 20px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(37,99,235,0.12);transition:transform .15s}
+    .loadMore:active{transform:scale(.98)}
+
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(rgba(2,6,23,0.6),rgba(2,6,23,0.85));padding:24px;z-index:60}
+    .modal.open{display:flex}
+    .modal-card{max-width:980px;width:100%;background:linear-gradient(180deg, rgba(10,18,28,0.95), rgba(6,12,20,0.95));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);transform:translateY(20px);opacity:0;transition:all .35s cubic-bezier(.2,.9,.2,1)}
+    .modal.open .modal-card{transform:translateY(0);opacity:1}
+    .modal-grid{display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start}
+    .modal-thumb{height:320px;border-radius:10px;overflow:hidden}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+    .modal-title-wrap{display:flex;flex-direction:column}
+    .modal-title{font-size:1.25rem;margin:0}
+    .modal-sub{font-size:0.9rem;color:var(--muted);margin-top:6px}
+    .modal-desc{color:var(--muted);line-height:1.6;margin-top:6px}
+    .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+    footer{margin-top:28px;color:var(--muted);font-size:0.92rem;text-align:center}
+    @media (max-width:980px){.hero{grid-template-columns:1fr}.visual{height:280px}.float-grid{display:none}.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.modal-grid{grid-template-columns:1fr}}
+  
+    /* THEME: light / dark variables and toggle styles */
+    .theme-toggle{position:fixed;right:18px;top:18px;z-index:120;background:linear-gradient(90deg,#ffffff11,#ffffff06);backdrop-filter:blur(6px);padding:10px;border-radius:12px;cursor:pointer;border:1px solid rgba(255,255,255,0.06);box-shadow:0 8px 24px rgba(2,6,23,0.5);font-size:18px}
+    body{transition:background .35s ease,color .25s ease}
+    /* Light theme overrides */
+    .light-theme{--bg:#fdfdfd; --card:#ffffff; --muted:#6f7a88; --accent:#0070f3; --accent-2:#5b3df5;}
+
+    /* Updated Light Theme Background */
+    .light-theme body{
+      background:
+        radial-gradient(900px 500px at 10% 10%, rgba(0,112,243,0.12), transparent 60%),
+        radial-gradient(700px 450px at 90% 90%, rgba(91,61,245,0.10), transparent 70%),
+        linear-gradient(180deg,#ffffff 0%, #f3f5f9 100%);
+      color:#0f172a;
+    }{background:linear-gradient(180deg,#fbfdff 0%, #f3f7fb 100%)}
+    .light-theme .card{background:linear-gradient(180deg, rgba(10,20,40,0.02), rgba(10,20,40,0.01));color: #04243b}
+    .light-theme .hero-left{background:linear-gradient(180deg,#ffffff,#fbfdff);box-shadow:0 8px 28px rgba(15,32,72,0.04);border:1px solid rgba(2,6,23,0.03)}
+    .light-theme .logo{color:white}
+    .light-theme .btn{box-shadow:0 8px 24px rgba(11,109,240,0.06)}
+
+  </style> 
+</head>
+<body>
+  <div class="theme-toggle" id="themeToggle" title="Toggle theme" aria-pressed="false">🌙</div>
+  <div class="wrap">
+    <!-- decorative web anchor where stickers appear to hang from -->
+    <div class="web-anchor" aria-hidden="true">
+      <svg class="web-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.2">
+          <circle cx="60" cy="60" r="38" />
+          <circle cx="60" cy="60" r="26" />
+          <circle cx="60" cy="60" r="14" />
+          <path d="M60 22 L60 0" stroke-linecap="round" />
+          <path d="M60 22 L40 30 M60 22 L80 30" stroke-linecap="round" />
+          <path d="M60 98 L60 120" stroke-linecap="round" opacity="0.2"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero">
+      <div class="hero-left">
+        <div class="logo">HC</div>
+        <h1>Sell your projects with confidence — <span style="color:var(--accent);">Make a great first impression</span></h1>
+        <div class="h-sub">Interactive previews, polished UI and buyer-friendly CTAs. Showcase IoT, AI and web projects with attractive visuals.</div>
+        <div class="cta-row">
+          <button class="btn" id="ctaExplore">Explore Projects</button>
+          <a class="btn secondary" href="https://codecrestinovations.pythonanywhere.com/" target="_blank" rel="noopener">More details</a>
+        </div>
+        <div style="margin-top:16px;color:var(--muted)">Built by <strong>Harsha Seshadri</strong> — <a href="mailto:hello@codecrestinovations.pythonanywhere.com" style="color:var(--muted)">Contact</a></div>
+      </div>
+
+      <div class="visual" aria-hidden="true">
+        <div class="blob"></div>
+        <div class="float-grid" id="floatGrid"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search"><input type="text" id="q" placeholder="Search projects by name or tag..." /></div>
+      <div style="width:180px"><select id="filter"><option value="">All tags</option></select></div>
+      <div style="width:160px"><select id="sort"><option value="new">Newest</option><option value="old">Oldest</option><option value="price-asc">Price: low → high</option><option value="price-desc">Price: high → low</option></select></div>
+      <div style="width:120px"><button id="clearBtn" class="btn">Reset</button></div>
+    </div>
+
+    <main>
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div class="loadMoreWrap"><button id="loadMore" class="loadMore">Load more projects</button></div>
+    </main>
+
+    <footer>
+      Built by Harsha Seshadri — For more details visit <a href="https://codecrestinovations.pythonanywhere.com/" target="_blank" rel="noopener">codecrestinovations.pythonanywhere.com</a>
+    </footer>
+  </div>
+
+  <div id="modal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-card" id="modalCard">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="modalTitle">Project Title</h3>
+          <div class="modal-sub" id="modalSub">Short subtitle or tag</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button id="modalRepo" class="btn secondary" style="padding:8px 12px">View Repo</button>
+          <button id="modalDemo" class="btn secondary" style="padding:8px 12px">View Demo</button>
+          <button id="closeModal" style="background:transparent;border:0;color:var(--muted);font-weight:700;cursor:pointer">Close ✕</button>
+        </div>
+      </div>
+
+      <div class="modal-grid">
+        <div>
+          <div class="modal-thumb" id="modalImage"></div>
+        </div>
+        <div>
+          <div id="modalDesc" class="modal-desc">Long description here</div>
+          <div class="modal-actions">
+            <div id="modalPrice" style="font-weight:800;color:white;font-size:1.1rem"></div>
+            <button id="buyBtn" class="btn" style="margin-left:auto">Contact to Buy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script id="projects-data" type="application/json">
+  [
+    {
+      "id": "p1",
+      "title": "Smart Inventory System",
+      "short": "Inventory + barcode scanning + reports",
+      "description": "A full-stack inventory system with barcode scanning, stock alerts and printable reports. Built with a lightweight backend and a responsive frontend.",
+      "tags": ["IoT","Inventory","Webapp"],
+      "image": "https://picsum.photos/seed/p1/800/600",
+      "repo": "https://github.com/yourusername/smart-inventory",
+      "demo": "",
+      "price": 1999,
+      "date": "2025-10-30"
+    },
+    {
+      "id": "p2",
+      "title": "Face Attendance System",
+      "short": "Attendance using face recognition",
+      "description": "Attendance system using a face recognition model; exports CSV and integrates with Slack/email alerts.",
+      "tags": ["AI","FaceRec","Attendance"],
+      "image": "https://picsum.photos/seed/p2/800/600",
+      "repo": "https://github.com/yourusername/face-attendance",
+      "demo": "",
+      "price": 2999,
+      "date": "2025-08-12"
+    },
+    {
+      "id": "p3",
+      "title": "Smart Helmet",
+      "short": "IoT safety helmet",
+      "description": "Helmet with sensors to detect accidents and send emergency alerts.",
+      "tags": ["IoT","Safety"],
+      "image": "https://picsum.photos/seed/p3/800/600",
+      "repo": "",
+      "demo": "",
+      "price": null,
+      "date": "2025-07-02",
+      "upcoming": true
+    }
+  ]
+  </script>
+
+  <script>
+    const projectsJson = document.getElementById('projects-data').textContent;
+    let projects = [];
+    try{ projects = JSON.parse(projectsJson) } catch(e){ projects = []; console.error('Invalid projects JSON', e) }
+
+    const grid = document.getElementById('grid');
+    const floatGrid = document.getElementById('floatGrid');
+    const filterEl = document.getElementById('filter');
+    const qEl = document.getElementById('q');
+    const sortEl = document.getElementById('sort');
+    const clearBtn = document.getElementById('clearBtn');
+    const ctaExplore = document.getElementById('ctaExplore');
+    const loadMoreBtn = document.getElementById('loadMore');
+
+    let shownCount = 0; const BATCH = 4; // how many projects to show per batch
+
+    function uniqueTags(list){ const s=new Set(); list.forEach(p=> (p.tags||[]).forEach(t=>s.add(t)) ); return Array.from(s).sort() }
+    function populateFilter(){ const tags = uniqueTags(projects); filterEl.innerHTML = '<option value="">All tags</option>' + tags.map(t=>`<option value="${t}">${t}</option>`).join('') }
+    function formatPrice(p){ return (p==null||p==='')? 'Contact' : '₹' + p }
+
+    function showSkeletons(count){ grid.innerHTML = ''; for(let i=0;i<count;i++){ const s = document.createElement('div'); s.className='card skeleton'; s.style.height='260px'; s.innerHTML = '<div style="height:140px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));margin-bottom:12px"></div><div class="line" style="width:65%"></div><div class="line" style="width:45%"></div><div style="height:16px"></div>'; grid.appendChild(s)} }
+
+    function renderPreviewCards(){ const items = projects.slice(0,4); floatGrid.innerHTML = items.map(p=>`<div class="preview tilt" data-id="${p.id}"><h4>${p.title}</h4><div class="p-tag">${(p.tags||[])[0]||''}</div></div>`).join(''); document.querySelectorAll('.preview').forEach(el=>applyTilt(el,8)); document.querySelectorAll('.preview').forEach(el=>el.addEventListener('click', ()=>openModal(el.dataset.id))) }
+
+    function renderBatch(){ const filtered = getFilteredSorted(); const next = filtered.slice(shownCount, shownCount+BATCH); if(next.length===0){ loadMoreBtn.textContent='No more projects'; loadMoreBtn.disabled=true; loadMoreBtn.style.opacity=0.7; return } next.forEach(p=>{ const el = makeCard(p); grid.appendChild(el); setTimeout(()=>{ el.style.opacity=1; el.style.transform='translateY(0)'; },100); }); shownCount += next.length; if(shownCount >= filtered.length){ loadMoreBtn.textContent='No more projects'; loadMoreBtn.disabled=true; loadMoreBtn.style.opacity=0.7 } }
+
+    function makeCard(p){ const art = document.createElement('article'); art.className='card'+(p.upcoming?' upcoming':''); art.dataset.id = p.id; art.style.opacity=0; art.style.transform='translateY(18px)'; art.innerHTML = `
+      <div class="thumb"><span class="ribbon">${p.upcoming? 'Coming Soon' : ((p.tags&&p.tags[0])||'')}</span><div class="tilt" style="height:100%"><img src="${p.image||'https://picsum.photos/seed/fallback/800/600'}" alt="${p.title}" onload="this.classList.add('loaded')"/></div></div>
+      <div class="meta">
+        <h3 class="title">${p.title}</h3>
+        <p class="desc">${p.short}</p>
+        <div class="tags">${(p.tags||[]).slice(0,4).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+      <div class="card-footer">
+        <a class="link" href="${p.repo||'#'}" target="_blank" rel="noopener">Repo</a>
+        <a class="link" href="${p.demo||'#'}" target="_blank" rel="noopener">Demo</a>
+        <div style="margin-left:auto" class="price">${formatPrice(p.price)}</div>
+      </div>
+    `; applyTilt(art,10); art.addEventListener('click', (e)=>{ if(e.target.tagName.toLowerCase()==='a') return; openModal(p.id); }); return art }
+
+    function getFilteredSorted(){ const q = qEl.value.trim().toLowerCase(); const tag = filterEl.value; let list = projects.slice(); if(tag) list = list.filter(p=>(p.tags||[]).includes(tag)); if(q) list = list.filter(p=> (p.title+ ' ' + (p.short||'') + ' ' + (p.description||'') + ' ' + (p.tags||[]).join(' ')).toLowerCase().includes(q)); const sort = sortEl.value; if(sort==='new') list.sort((a,b)=> (b.date||'').localeCompare(a.date||'')); else if(sort==='old') list.sort((a,b)=> (a.date||'').localeCompare(b.date||'')); else if(sort==='price-asc') list.sort((a,b)=> (Number(a.price)||0)-(Number(b.price)||0)); else if(sort==='price-desc') list.sort((a,b)=> (Number(b.price)||0)-(Number(a.price)||0)); return list }
+
+    function resetAndLoad(){ shownCount=0; grid.innerHTML=''; loadMoreBtn.disabled=false; loadMoreBtn.textContent='Load more projects'; loadMoreBtn.style.opacity=1; showSkeletons(4); setTimeout(()=>{ renderPreviewCards(); renderBatch(); },800) }
+
+    // modal
+    const modal = document.getElementById('modal'); const modalCard = document.getElementById('modalCard');
+    const modalTitle = document.getElementById('modalTitle'); const modalImage = document.getElementById('modalImage');
+    const modalDesc = document.getElementById('modalDesc'); const modalRepo = document.getElementById('modalRepo');
+    const modalDemo = document.getElementById('modalDemo'); const modalPrice = document.getElementById('modalPrice'); const buyBtn = document.getElementById('buyBtn');
+
+    function openModal(id){ const p = projects.find(x=>x.id===id); if(!p) return; modalTitle.textContent = p.title; document.getElementById('modalSub').textContent = (p.tags&&p.tags[0])||''; modalImage.innerHTML = `<img src="${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;border-radius:8px"/>`; modalDesc.textContent = p.description || p.short || ''; modalRepo.onclick = ()=>{ window.open(p.repo||'#','_blank') }; modalDemo.onclick = ()=>{ window.open(p.demo||'#','_blank') }; modalPrice.textContent = (p.price?('₹'+p.price):'Contact'); buyBtn.onclick = ()=>{ window.location.href = 'mailto:hello@codecrestinovations.pythonanywhere.com?subject=Interested%20in%20'+encodeURIComponent(p.title)}; modal.classList.add('open'); document.body.style.overflow='hidden' }
+    document.getElementById('closeModal').addEventListener('click', ()=>{ modal.classList.remove('open'); document.body.style.overflow='' }); modal.addEventListener('click', (e)=>{ if(e.target===modal) { modal.classList.remove('open'); document.body.style.overflow='' } })
+
+    function applyTilt(el, strength=12){ const inner = el.querySelector('.tilt') || el; el.addEventListener('mousemove', (ev)=>{ const r = el.getBoundingClientRect(); const cx = r.left + r.width/2; const cy = r.top + r.height/2; const dx = ev.clientX - cx; const dy = ev.clientY - cy; const rx = (-dy / r.height) * strength; const ry = (dx / r.width) * strength; inner.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(6px)`; }); el.addEventListener('mouseleave', ()=>{ inner.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)' }); }
+
+    function applyFilters(){ resetAndLoad(); }
+    qEl.addEventListener('input', ()=>{ applyFilters(); }); filterEl.addEventListener('change', applyFilters); sortEl.addEventListener('change', applyFilters);
+    clearBtn.addEventListener('click', ()=>{ qEl.value=''; filterEl.value=''; sortEl.value='new'; applyFilters(); });
+
+    loadMoreBtn.addEventListener('click', ()=>{ loadMoreBtn.disabled=true; loadMoreBtn.textContent='Loading...'; setTimeout(()=>{ renderBatch(); loadMoreBtn.disabled=false; loadMoreBtn.textContent='Load more projects'; },700) })
+
+    ctaExplore.addEventListener('click', ()=>{ window.scrollTo({top: document.getElementById('grid').offsetTop - 20, behavior:'smooth'}) }
+    )
+
+    // --- stickers falling from the web (new creative effect) ---
+    const webRect = document.querySelector('.web-anchor').getBoundingClientRect();
+    const stickerTexts = [
+      'More projects coming soon!',
+      'New AI pack',
+      'IoT bundle',
+      'Holiday offer',
+      'Demo video',
+      'Contact for custom work'
+    ];
+
+    // create a sticker element and animate it
+    function spawnSticker(options={text:'Sticker',emoji:false}){
+      const s = document.createElement('div'); s.className = 'sticker ' + (options.emoji? 'emoji':'small'); s.textContent = options.text;
+      document.body.appendChild(s);
+      // starting position near the web anchor with slight random offset
+      const startX = webRect.left + webRect.width/2 + (Math.random()*120-60);
+      const startY = webRect.top + webRect.height/2 + (Math.random()*10-20);
+      s.style.left = startX + 'px'; s.style.top = startY + 'px';
+
+      // randomize size and rotation
+      const scale = 0.9 + Math.random()*0.5; s.style.transform = `scale(${scale})`;
+
+      // apply drop animation with random delay/duration
+      const dur = 4200 + Math.random()*2600; const delay = Math.random()*1200;
+      s.style.animation = `dropSwing ${dur}ms cubic-bezier(.2,.9,.2,1) ${delay}ms both`;
+
+      // after drop, apply pendulum oscillation to look like it's hanging
+      setTimeout(()=>{
+        s.style.transition = 'transform 0.2s';
+        s.style.transformOrigin = 'top center';
+        const pend = 3000 + Math.random()*2000;
+        s.style.animation = `pendulum ${pend}ms ease-in-out infinite`;
+      }, dur + delay - 200);
+
+      // make clickable: open a featured project modal (pick random project)
+      s.addEventListener('click', (e)=>{
+        e.stopPropagation(); const p = projects[Math.floor(Math.random()*projects.length)]; if(p) openModal(p.id);
+        // small pop when clicked
+        s.animate([{transform: 'scale(1.08)'},{transform:'scale(1)'}],{duration:260});
+      });
+
+      // remove after some time to avoid DOM buildup
+      setTimeout(()=>{ s.animate([{opacity:1},{opacity:0}],{duration:800}); setTimeout(()=>s.remove(),900) }, 18000 + Math.random()*12000);
+    }
+
+    // spawn stickers periodically (limit concurrent)
+    let stickerTimer = null;
+    function startStickers(){ let active=0; stickerTimer = setInterval(()=>{
+      if(active>8) return; // cap simultaneous
+      const pick = stickerTexts[Math.floor(Math.random()*stickerTexts.length)]; const useEmoji = Math.random()>0.6;
+      spawnSticker({text: useEmoji? '⭐ '+pick : pick, emoji: useEmoji}); active++;
+      // decrease active soon
+      setTimeout(()=>{ active = Math.max(0, active-1) }, 7000 + Math.random()*8000);
+    }, 1200); }
+
+    // ensure webRect updates on resize
+    window.addEventListener('resize', ()=>{ const r = document.querySelector('.web-anchor').getBoundingClientRect(); webRect.left = r.left; webRect.top = r.top; webRect.width = r.width; webRect.height = r.height; });
+
+    // initialize
+    function init(){ populateFilter(); showSkeletons(4); setTimeout(()=>{ renderPreviewCards(); renderBatch(); startStickers(); },900) }
+    // THEME toggle logic: remembers user choice in localStorage
+    (function(){
+      const toggle = document.getElementById('themeToggle');
+      const storageKey = 'marketplace_theme';
+      function applyTheme(theme){
+        if(theme === 'light') document.documentElement.classList.add('light-theme'); else document.documentElement.classList.remove('light-theme');
+        toggle.textContent = theme === 'light' ? '☀️' : '🌙';
+        toggle.setAttribute('aria-pressed', theme === 'light');
+      }
+      // read saved or prefer-color-scheme
+      let saved = localStorage.getItem(storageKey);
+      if(!saved){ saved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark'; }
+      applyTheme(saved);
+      toggle.addEventListener('click', ()=>{
+        const newTheme = document.documentElement.classList.contains('light-theme') ? 'dark' : 'light';
+        applyTheme(newTheme); localStorage.setItem(storageKey, newTheme);
+      });
+    })();
+
+    init();
+  </script>
+</body>
+</html>
